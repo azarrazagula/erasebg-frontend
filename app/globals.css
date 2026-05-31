@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cabin+Grotesk:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+body {
+  @apply bg-cream font-body text-gray-900;
+}
+
+@layer components {
+  .btn-coral {
+    @apply bg-gradient-coral px-6 py-3 rounded-full font-medium text-white transition-all duration-300 hover:shadow-soft-lg active:scale-95;
+  }
+
+  .btn-coral-hover {
+    @apply hover:animate-lift-hover;
+  }
+
+  .card-white {
+    @apply bg-white rounded-3xl shadow-soft;
+  }
+
+  .card-white-hover {
+    @apply hover:shadow-soft-lg hover:animate-lift-hover transition-all duration-300;
+  }
+
+  .shimmer {
+    @apply bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200;
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+h1 {
+  @apply font-display font-bold;
+}
+
+h2 {
+  @apply font-display font-semibold;
+}
+
+h3 {
+  @apply font-display font-semibold;
+}
