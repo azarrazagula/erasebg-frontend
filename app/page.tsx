@@ -148,14 +148,25 @@ export default function Home(): JSX.Element {
             </div>
           )}
 
-          {/* RESULT STATE - Show result in same card */}
+          {/* RESULT STATE - Show only processed image */}
           {resultBlob && (
-            <div className="space-y-6 animate-fade-up">
+            <div className="space-y-6 animate-fade-up flex flex-col items-center justify-center">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                 ✨ Done! Your Image is Ready
               </h2>
-              <ImagePreview originalUrl={originalUrl} resultBlob={resultBlob} />
-              <div className="pt-6 border-t border-gray-200 space-y-4">
+              
+              {/* Display only the processed image */}
+              <div className="w-full max-w-md">
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-gray-100">
+                  <img
+                    src={URL.createObjectURL(resultBlob)}
+                    alt="Processed Result"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="w-full pt-6 border-t border-gray-200 space-y-4">
                 <DownloadBtn resultBlob={resultBlob} />
                 <button
                   onClick={handleReset}
