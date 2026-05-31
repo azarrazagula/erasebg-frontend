@@ -133,16 +133,6 @@ export default function DropZone({
           </div>
         )}
       </div>
-
-      {!isLoading && (
-        <button
-          onClick={handleClick}
-          disabled={disabled}
-          className="w-full btn-coral btn-coral-hover disabled:opacity-50 disabled:cursor-not-allowed text-base md:text-lg py-4"
-        >
-          Remove Background
-        </button>
-      )}
     </div>
   );
 }
