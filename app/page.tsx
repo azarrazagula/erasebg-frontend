@@ -154,7 +154,7 @@ export default function Home(): JSX.Element {
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                 ✨ Done! Your Image is Ready
               </h2>
-              
+
               {/* Display only the processed image */}
               <div className="w-full max-w-md">
                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-gray-100">
