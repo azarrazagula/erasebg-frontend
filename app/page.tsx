@@ -157,7 +157,7 @@ export default function Home(): JSX.Element {
 
               {/* Display only the processed image */}
               <div className="w-full max-w-md">
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-gray-100">
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-red-500">
                   <img
                     src={URL.createObjectURL(resultBlob)}
                     alt="Processed Result"
