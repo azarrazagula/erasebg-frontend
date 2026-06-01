@@ -62,30 +62,26 @@ export default function Home(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        {/* Header */}
-        <header
-          className={`mb-12 md:mb-16 transition-all duration-500 ${
-            resultBlob
-              ? "opacity-50 scale-95"
-              : "opacity-100 scale-100 animate-fade-up"
-          }`}
-        >
-          <div className="flex justify-center mb-6">
-            <div className="inline-block px-4 py-2 bg-white rounded-full shadow-soft">
-              <span className="text-xs md:text-sm font-medium text-gray-600">
-                🚀 AI Powered · Free · Unlimited
-              </span>
+    <div className="min-h-screen bg-cream flex flex-col">
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full flex-1 flex flex-col ${originalUrl ? 'justify-center' : ''}`}>
+        {/* Header - Only show if no image selected */}
+        {!originalUrl && (
+          <header className="mb-12 md:mb-16 animate-fade-up">
+            <div className="flex justify-center mb-6">
+              <div className="inline-block px-4 py-2 bg-white rounded-full shadow-soft">
+                <span className="text-xs md:text-sm font-medium text-gray-600">
+                  🚀 AI Powered · Free · Unlimited
+                </span>
+              </div>
             </div>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-center text-gray-900 ">
-            Remove Background Like Magic.
-          </h1>
-        </header>
+            <h1 className="text-4xl md:text-6xl font-bold text-center text-gray-900">
+              Remove Background Like Magic.
+            </h1>
+          </header>
+        )}
 
-        {/* Main Card - Contains Everything */}
-        <div className="card-white p-8 md:p-12 mb-12 animate-fade-up-delay-2">
+        {/* Main Card - Contains Everything (Remove card styling if result is ready) */}
+        <div className={`transition-all duration-500 w-full ${resultBlob ? '' : 'card-white p-8 md:p-12 mb-12 animate-fade-up-delay-2'}`}>
           {/* UPLOAD STATE - Show upload zone */}
           {!originalUrl && (
             <DropZone
@@ -120,25 +116,35 @@ export default function Home(): JSX.Element {
 
           {/* RESULT STATE - Show only processed image */}
           {resultBlob && (
-            <div className="space-y-6 animate-fade-up flex flex-col items-center justify-center">
-              {/* Display only the processed image */}
-              <div className="w-full max-w-xs">
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-red-500">
+            <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center w-full">
+              <div className="w-full flex justify-center">
+                <div 
+                  className="relative rounded-2xl flex items-center justify-center overflow-hidden border border-gray-200/60 shadow-xl"
+                  style={{
+                    backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYBCweAB/nwBCgKDBwzQJ4yMowB+jxgF99r31wAAAABJRU5ErkJggg==")',
+                    backgroundRepeat: 'repeat',
+                  }}
+                >
                   <img
                     src={URL.createObjectURL(resultBlob)}
                     alt="Processed Result"
-                    className="w-full h-full object-contain"
+                    className="max-w-full max-h-[70vh] object-contain block"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-4 items-center justify-center">
-                <DownloadBtn resultBlob={resultBlob} />
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-md pt-4">
+                <div className="w-full sm:w-auto flex-1">
+                  <DownloadBtn resultBlob={resultBlob} />
+                </div>
                 <button
                   onClick={handleReset}
-                  className="px-6 py-3 rounded-full font-medium text-white bg-coral-main hover:bg-coral-dark transition-all duration-300 hover:shadow-soft-lg text-2xl"
+                  className="w-full sm:w-auto flex-1 px-6 py-3 rounded-xl font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 border border-gray-200 shadow-sm"
                 >
-                  +
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  New Image
                 </button>
               </div>
             </div>
