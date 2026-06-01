@@ -88,32 +88,6 @@ export default function Home(): JSX.Element {
           </p>
         </header>
 
-        {/* Stats Row */}
-        <div
-          className={`grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 transition-all duration-500 ${
-            resultBlob
-              ? "opacity-50 scale-95"
-              : "opacity-100 scale-100 animate-fade-up-delay-1"
-          }`}
-        >
-          {[
-            { label: "No Limit", icon: "♾️" },
-            { label: "~3 seconds", icon: "⚡" },
-            { label: "HD Output", icon: "✨" },
-            { label: "Private", icon: "🔒" },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="card-white card-white-hover p-4 md:p-6 text-center"
-            >
-              <div className="text-3xl md:text-4xl mb-2">{stat.icon}</div>
-              <p className="text-xs md:text-sm font-medium text-gray-700">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-
         {/* Main Card - Contains Everything */}
         <div className="card-white p-8 md:p-12 mb-12 animate-fade-up-delay-2">
           {/* UPLOAD STATE - Show upload zone */}
