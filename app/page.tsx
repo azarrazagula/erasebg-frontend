@@ -79,13 +79,9 @@ export default function Home(): JSX.Element {
               </span>
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-center text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-center text-gray-900 ">
             Remove Background Like Magic.
           </h1>
-          <p className="text-center text-gray-600 text-base md:text-lg max-w-2xl mx-auto">
-            Instantly remove backgrounds from your images with cutting-edge AI.
-            No signup, no limits, 100% private.
-          </p>
         </header>
 
         {/* Main Card - Contains Everything */}
@@ -130,7 +126,7 @@ export default function Home(): JSX.Element {
               </h2>
 
               {/* Display only the processed image */}
-              <div className="w-full max-w-md">
+              <div className="w-full max-w-xs">
                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-red-500">
                   <img
                     src={URL.createObjectURL(resultBlob)}
