@@ -15,6 +15,7 @@ export default function Home(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingStep, setLoadingStep] = useState<LoadingStep>(0);
+  const [sliderPos, setSliderPos] = useState(50);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -39,6 +40,7 @@ export default function Home(): JSX.Element {
     setIsLoading(true);
     setLoadingStep(0);
     setResultBlob(null);
+    setSliderPos(50); // Reset slider
 
     try {
       const blob = await removeBg(file);
@@ -114,21 +116,64 @@ export default function Home(): JSX.Element {
             </div>
           )}
 
-          {/* RESULT STATE - Show only processed image */}
-          {resultBlob && (
+          {/* RESULT STATE - Show slider with both images */}
+          {resultBlob && originalUrl && (
             <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center w-full">
               <div className="w-full flex justify-center">
-                <div 
-                  className="relative rounded-2xl flex items-center justify-center overflow-hidden border border-gray-200/60 shadow-xl"
-                  style={{
-                    backgroundImage: 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYBCweAB/nwBCgKDBwzQJ4yMowB+jxgF99r31wAAAABJRU5ErkJggg==")',
-                    backgroundRepeat: 'repeat',
-                  }}
-                >
+                
+                {/* Interactive Slider Container */}
+                <div className="relative rounded-2xl overflow-hidden border border-gray-200/60 shadow-2xl max-w-full inline-block group">
+                  
+                  {/* Theme-matching Checkerboard Background (Bottom Layer) */}
+                  <div 
+                    className="absolute inset-0 z-0"
+                    style={{
+                      backgroundColor: '#F5F0E8',
+                      backgroundImage: 'linear-gradient(45deg, #FFFFFF 25%, transparent 25%, transparent 75%, #FFFFFF 75%, #FFFFFF), linear-gradient(45deg, #FFFFFF 25%, transparent 25%, transparent 75%, #FFFFFF 75%, #FFFFFF)',
+                      backgroundSize: '24px 24px',
+                      backgroundPosition: '0 0, 12px 12px'
+                    }}
+                  ></div>
+
+                  {/* Processed Result Image (Middle Layer) */}
                   <img
                     src={URL.createObjectURL(resultBlob)}
                     alt="Processed Result"
-                    className="max-w-full max-h-[70vh] object-contain block"
+                    className="relative z-10 max-w-full max-h-[70vh] object-contain block select-none pointer-events-none"
+                  />
+
+                  {/* Original Image (Top Layer with Clip-Path) */}
+                  <div 
+                    className="absolute inset-0 z-20 w-full h-full"
+                    style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
+                  >
+                    <img
+                      src={originalUrl}
+                      alt="Original Image"
+                      className="w-full h-full object-contain block select-none pointer-events-none"
+                    />
+                  </div>
+
+                  {/* Slider Control Handle */}
+                  <div 
+                    className="absolute top-0 bottom-0 z-30 w-1 bg-white cursor-ew-resize shadow-[0_0_10px_rgba(0,0,0,0.5)]"
+                    style={{ left: `${sliderPos}%` }}
+                  >
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200 text-gray-500 transition-transform group-hover:scale-110">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 9l-3 3 3 3m8-6l3 3-3 3"></path>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Invisible Range Input for Interaction */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={sliderPos}
+                    onChange={(e) => setSliderPos(Number(e.target.value))}
+                    className="absolute inset-0 z-40 w-full h-full opacity-0 cursor-ew-resize"
                   />
                 </div>
               </div>
