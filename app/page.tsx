@@ -121,10 +121,6 @@ export default function Home(): JSX.Element {
           {/* RESULT STATE - Show only processed image */}
           {resultBlob && (
             <div className="space-y-6 animate-fade-up flex flex-col items-center justify-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                ✨ Done! Your Image is Ready
-              </h2>
-
               {/* Display only the processed image */}
               <div className="w-full max-w-xs">
                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-red-500">
@@ -136,13 +132,13 @@ export default function Home(): JSX.Element {
                 </div>
               </div>
 
-              <div className="w-full pt-6 border-t border-gray-200 space-y-4">
+              <div className="flex gap-4 items-center justify-center">
                 <DownloadBtn resultBlob={resultBlob} />
                 <button
                   onClick={handleReset}
-                  className="w-full px-6 py-3 rounded-full font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-300 hover:shadow-soft-lg"
+                  className="px-6 py-3 rounded-full font-medium text-white bg-coral-main hover:bg-coral-dark transition-all duration-300 hover:shadow-soft-lg text-2xl"
                 >
-                  ↻ Process Another Image
+                  +
                 </button>
               </div>
             </div>
