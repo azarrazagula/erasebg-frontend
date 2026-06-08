@@ -17,7 +17,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ["Clash Display", "sans-serif"],
-        body: ["Cabinet Grotesk", "sans-serif"],
+        body: ["Cabin Grotesk", "sans-serif"],
       },
       animation: {
         "fade-up": "fadeUp 0.6s ease-out forwards",

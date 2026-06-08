@@ -1,5 +1,7 @@
+import { CoreConfig } from "@/cores/Core";
+
 export async function removeBg(file: File): Promise<Blob> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = CoreConfig.api.baseUrl;
 
   if (!apiUrl) {
     throw new Error("API URL is not configured");
@@ -9,10 +11,13 @@ export async function removeBg(file: File): Promise<Blob> {
   formData.append("file", file);
 
   try {
-    const response = await fetch(`${apiUrl}/remove-bg`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      `${apiUrl}${CoreConfig.api.endpoints.removeBg}`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
 
     if (!response.ok) {
       let errorMessage = `Failed to remove background: ${response.status}`;
