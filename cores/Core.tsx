@@ -18,7 +18,7 @@ const getApiUrl = (): string => {
   }
 
   // Production environment (Vercel or hosted)
-  return "https://api.erasebg.com"; // Replace with your actual API endpoint
+  return "https://erasebg-backend.onrender.com";
 };
 
 export const API_BASE_URL = getApiUrl();
