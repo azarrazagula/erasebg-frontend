@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cabin+Grotesk:wght@400;500;600;700&display=swap");
+/* Fonts are loaded via next/font in layout.tsx — no @import needed */
 
 @tailwind base;
 @tailwind components;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import DropZone from "@/components/DropZone";
 import ImagePreview from "@/components/ImagePreview";
 import DownloadBtn from "@/components/DownloadBtn";
@@ -287,22 +288,22 @@ export default function Home(): JSX.Element {
               {[
                 {
                   label: "Product",
-                  url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop&q=80",
+                  url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80",
                   filename: "shoe-example.jpg"
                 },
                 {
                   label: "Portrait",
-                  url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+                  url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80",
                   filename: "portrait-example.jpg"
                 },
                 {
                   label: "Animal",
-                  url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop&q=80",
+                  url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop&q=80",
                   filename: "cat-example.jpg"
                 },
                 {
                   label: "Car",
-                  url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&auto=format&fit=crop&q=80",
+                  url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80",
                   filename: "car-example.jpg"
                 }
               ].map((example, index) => (
@@ -313,14 +314,15 @@ export default function Home(): JSX.Element {
                   disabled={isLoading}
                 >
                   <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-900">
-                    <img
+                    <Image
                       src={example.url}
                       alt={example.label}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     {/* Glassmorphic overlay */}
-                    <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-indigo-950/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-indigo-950/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
                       <span className="px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-white text-xs font-semibold tracking-wide shadow-lg">
                         Test AI
                       </span>
