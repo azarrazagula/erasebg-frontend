@@ -226,49 +226,56 @@ export default function Home(): JSX.Element {
           </div>
         )}
 
-        {/* PROCESSING & PREVIEW STATE */}
-        {originalUrl && !resultBlob && (
+        {/* IMAGE PREVIEW, SCANNING & RESULT CONTAINER */}
+        {originalUrl && (
           <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center min-h-[60vh] w-full relative z-10 py-6">
             
             {/* Header Text */}
-            <div className="text-center space-y-2 max-w-md">
+            <div className="text-center space-y-2.5 max-w-md">
               <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                {isRevealing ? "Revealing Result..." : "Analyzing Image Subject..."}
+                {!tempResultUrl && "Analyzing Image..."}
+                {tempResultUrl && isRevealing && "Revealing Result..."}
+                {resultUrl && !isRevealing && "Background Removed!"}
               </h2>
               <p className="text-slate-400 text-sm">
-                {isRevealing 
-                  ? "Background removed successfully. Applying final mask..." 
-                  : "Detecting borders, details, and separating foreground..."
-                }
+                {!tempResultUrl && "Detecting borders, details, and separating foreground..."}
+                {tempResultUrl && isRevealing && "Applying final transparent mask..."}
+                {resultUrl && !isRevealing && "Your transparent PNG is ready for download."}
               </p>
             </div>
 
-            {/* Premium Scanning Image Display */}
-            <div className="relative rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-950/60 max-w-full max-h-[50vh] p-2 flex items-center justify-center">
+            {/* The Unified Card */}
+            <div className="relative rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-[#0b0914] p-3 flex items-center justify-center max-w-lg w-full">
               
-              <div className="relative rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center max-h-[45vh]">
+              <div 
+                className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center w-full aspect-[4/3]"
+                style={resultUrl && !isRevealing ? {
+                  backgroundColor: '#0F0C1B',
+                  backgroundImage: 'linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E), linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E)',
+                  backgroundSize: '24px 24px',
+                  backgroundPosition: '0 0, 12px 12px'
+                } : undefined}
+              >
                 
-                {/* 1. Loop Scan Mode (Still Loading from API) */}
-                {!isRevealing ? (
-                  <div className="relative inline-block max-w-full max-h-full">
-                    {/* The Original Image */}
+                {/* Mode A: Infinite Scanning Loop (Waiting for API response) */}
+                {!tempResultUrl && (
+                  <div className="relative w-full h-full">
                     <img
                       src={originalUrl}
                       alt="Scanning original"
-                      className="max-h-[40vh] max-w-full object-contain block opacity-95 transition-opacity duration-300 filter brightness-90 contrast-105"
+                      className="w-full h-full object-cover opacity-90 filter brightness-90 contrast-105"
                     />
-                    
                     {/* Matrix grid & scanner tint overlay */}
                     <div className="absolute inset-0 bg-indigo-500/5 mix-blend-overlay pointer-events-none" />
-                    
                     {/* Glowing Laser Scan Bar */}
                     <div className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_12px_#6366f1,0_0_24px_#6366f1] animate-laser-scan z-20" />
                   </div>
-                ) : (
-                  /* 2. Wipe Reveal Mode (API finished, revealing transparent image) */
-                  <div className="relative inline-block max-w-full max-h-full">
-                    
-                    {/* Theme-matching Checkerboard Background (Bottom Layer) */}
+                )}
+
+                {/* Mode B: Wipe Reveal Transition (API complete, animation running) */}
+                {tempResultUrl && isRevealing && (
+                  <div className="relative w-full h-full">
+                    {/* Checkerboard Background (revealed underneath) */}
                     <div 
                       className="absolute inset-0 z-0"
                       style={{
@@ -279,17 +286,15 @@ export default function Home(): JSX.Element {
                       }}
                     />
 
-                    {/* Processed BG-Removed Image (Middle Layer - Revealed from top down) */}
-                    {tempResultUrl && (
-                      <img
-                        src={tempResultUrl}
-                        alt="Processed Preview"
-                        className="relative z-10 max-h-[40vh] max-w-full object-contain block select-none pointer-events-none transition-all duration-75"
-                        style={{ clipPath: `inset(0 0 ${100 - revealProgress}% 0)` }}
-                      />
-                    )}
+                    {/* Transparent Result Image (Clipped from bottom up) */}
+                    <img
+                      src={tempResultUrl}
+                      alt="Processed Preview"
+                      className="absolute inset-0 z-10 w-full h-full object-cover transition-all duration-75"
+                      style={{ clipPath: `inset(0 0 ${100 - revealProgress}% 0)` }}
+                    />
 
-                    {/* Original Image (Top Layer - Clipped from top down, revealing the transparent layer) */}
+                    {/* Original Image (Clipped from top down) */}
                     <div 
                       className="absolute inset-0 z-20 w-full h-full"
                       style={{ clipPath: `inset(${revealProgress}% 0 0 0)` }}
@@ -297,120 +302,76 @@ export default function Home(): JSX.Element {
                       <img
                         src={originalUrl}
                         alt="Original Preview"
-                        className="w-full h-full object-contain block select-none pointer-events-none"
+                        className="w-full h-full object-cover"
                       />
                     </div>
 
-                    {/* Glowing Laser Reveal Bar */}
+                    {/* Laser Wipe Bar */}
                     <div 
                       className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_15px_#6366f1,0_0_30px_#6366f1] z-30 transition-all duration-75"
                       style={{ top: `${revealProgress}%` }}
                     />
                   </div>
                 )}
+
+                {/* Mode C: Static Result (Sweep finished, show clean PNG) */}
+                {resultUrl && !isRevealing && (
+                  <img
+                    src={resultUrl}
+                    alt="Background Removed Result"
+                    className="w-full h-full object-contain p-4 relative z-10 animate-fade-up"
+                  />
+                )}
+
               </div>
             </div>
 
-            {/* Text Steps Details */}
-            {!isRevealing && (
-              <div className="flex flex-col items-center justify-center gap-3 w-full max-w-xs">
-                <p className="text-center text-sm font-semibold tracking-wide uppercase text-indigo-400 animate-pulse">
-                  {loadingStep === 0 && "Analyzing Subject Elements..."}
-                  {loadingStep === 1 && "Isolating Edge Boundaries..."}
-                  {loadingStep === 2 && "Executing Neural Network..."}
-                  {loadingStep === 3 && "Upscaling Transparency Mask..."}
-                </p>
-                
-                {/* Minor glowing dot line helper */}
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-ping" />
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-60" />
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-30" />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* RESULT STATE - Show slider with both images */}
-        {resultBlob && originalUrl && (
-          <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center w-full relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-              Background Removed Successfully!
-            </h2>
-            
-            <div className="w-full flex justify-center">
-              {/* Interactive Slider Container */}
-              <div className="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl max-w-full inline-block group">
-                
-                {/* Theme-matching Checkerboard Background (Bottom Layer) */}
-                <div 
-                  className="absolute inset-0 z-0"
-                  style={{
-                    backgroundColor: '#0F0C1B',
-                    backgroundImage: 'linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E), linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E)',
-                    backgroundSize: '24px 24px',
-                    backgroundPosition: '0 0, 12px 12px'
-                  }}
-                ></div>
-
-                {/* Processed Result Image (Middle Layer) */}
-                <img
-                  src={resultUrl || ""}
-                  alt="Processed Result"
-                  className="relative z-10 max-w-full max-h-[60vh] object-contain block select-none pointer-events-none"
-                />
-
-                {/* Original Image (Top Layer with Clip-Path) */}
-                <div 
-                  className="absolute inset-0 z-20 w-full h-full"
-                  style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
-                >
-                  <img
-                    src={originalUrl}
-                    alt="Original Image"
-                    className="w-full h-full object-contain block select-none pointer-events-none"
-                  />
-                </div>
-
-                {/* Slider Control Handle */}
-                <div 
-                  className="absolute top-0 bottom-0 z-30 w-1 bg-white cursor-ew-resize shadow-[0_0_10px_rgba(0,0,0,0.5)]"
-                  style={{ left: `${sliderPos}%` }}
-                >
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-200 text-slate-700 transition-transform group-hover:scale-110">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 9l-3 3 3 3m8-6l3 3-3 3"></path>
-                    </svg>
+            {/* Bottom Actions Row */}
+            <div className="flex flex-col items-center gap-4 w-full max-w-sm z-20">
+              {/* While Processing Status */}
+              {!tempResultUrl && (
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-center text-sm font-semibold tracking-wide uppercase text-indigo-400 animate-pulse">
+                    {loadingStep === 0 && "Analyzing Subject Elements..."}
+                    {loadingStep === 1 && "Isolating Edge Boundaries..."}
+                    {loadingStep === 2 && "Executing Neural Network..."}
+                    {loadingStep === 3 && "Upscaling Transparency Mask..."}
+                  </p>
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-ping" />
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-60" />
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-30" />
                   </div>
                 </div>
+              )}
 
-                {/* Invisible Range Input for Interaction */}
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={sliderPos}
-                  onChange={(e) => setSliderPos(Number(e.target.value))}
-                  className="absolute inset-0 z-40 w-full h-full opacity-0 cursor-ew-resize"
-                />
-              </div>
+              {/* Reveal Progress Percentage */}
+              {tempResultUrl && isRevealing && (
+                <span className="text-indigo-400 text-sm font-semibold animate-pulse">
+                  Applying mask: {Math.round(revealProgress)}%
+                </span>
+              )}
+
+              {/* Result Complete Action Buttons */}
+              {resultUrl && !isRevealing && (
+                <div className="flex gap-4 w-full justify-center items-center animate-fade-up">
+                  <button
+                    onClick={handleReset}
+                    className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+                    </svg>
+                    New Image
+                  </button>
+                  
+                  {resultBlob && (
+                    <DownloadBtn resultBlob={resultBlob} />
+                  )}
+                </div>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-md pt-4">
-              <div className="w-full sm:w-auto flex-1">
-                <DownloadBtn resultBlob={resultBlob} />
-              </div>
-              <button
-                onClick={handleReset}
-                className="w-full sm:w-auto flex-1 px-6 py-3 rounded-full font-semibold text-slate-300 bg-slate-900/60 hover:bg-slate-900 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 border border-slate-800 shadow-sm"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                New Image
-              </button>
-            </div>
           </div>
         )}
 
