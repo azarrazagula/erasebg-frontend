@@ -31,6 +31,7 @@ const config: Config = {
         "bounce-dots-delay-2": "bounceDots 1.4s ease-in-out 0.4s infinite",
         "progress-fill": "progressFill 2s ease-in-out infinite",
         "lift-hover": "liftHover 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "laser-scan": "laserScan 2.5s ease-in-out infinite",
       },
       keyframes: {
         fadeUp: {
@@ -78,6 +79,14 @@ const config: Config = {
           },
           "100%": {
             transform: "translateY(-4px)",
+          },
+        },
+        laserScan: {
+          "0%, 100%": {
+            top: "0%",
+          },
+          "50%": {
+            top: "100%",
           },
         },
       },

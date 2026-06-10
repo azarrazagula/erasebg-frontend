@@ -19,6 +19,37 @@ export default function Home(): JSX.Element {
   const [sliderPos, setSliderPos] = useState(50);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
 
+  // Transition & Scan Reveal States
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [revealProgress, setRevealProgress] = useState(0);
+  const [tempResultUrl, setTempResultUrl] = useState<string | null>(null);
+  const [tempResultBlob, setTempResultBlob] = useState<Blob | null>(null);
+
+  // Reveal wipe animation driver
+  useEffect(() => {
+    if (!isRevealing || !tempResultBlob || !tempResultUrl) return;
+
+    setRevealProgress(0);
+    const step = 2.5; // Controls the sweep speed (faster/smoother)
+    const intervalTime = 16; // Roughly 60fps (16ms per frame)
+    const timer = setInterval(() => {
+      setRevealProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          // Finalize state: trigger completed view
+          setResultBlob(tempResultBlob);
+          setResultUrl(tempResultUrl);
+          setIsRevealing(false);
+          setIsLoading(false);
+          return 100;
+        }
+        return prev + step;
+      });
+    }, intervalTime);
+
+    return () => clearInterval(timer);
+  }, [isRevealing, tempResultBlob, tempResultUrl]);
+
   const handleExampleSelect = async (url: string, filename: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
@@ -28,6 +59,13 @@ export default function Home(): JSX.Element {
       URL.revokeObjectURL(resultUrl);
       setResultUrl(null);
     }
+    if (tempResultUrl) {
+      URL.revokeObjectURL(tempResultUrl);
+      setTempResultUrl(null);
+    }
+    setTempResultBlob(null);
+    setIsRevealing(false);
+    setRevealProgress(0);
     setSliderPos(50);
 
     try {
@@ -40,21 +78,25 @@ export default function Home(): JSX.Element {
       setSelectedFile(file);
 
       const result = await removeBg(file);
-      setResultBlob(result);
-      setResultUrl(URL.createObjectURL(result));
+      const objectUrl = URL.createObjectURL(result);
+      
+      // Stage the result and start the satisfying single-direction wipe reveal
+      setTempResultBlob(result);
+      setTempResultUrl(objectUrl);
+      setRevealProgress(0);
+      setIsRevealing(true);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to process example image";
       setError(errorMessage);
       setResultBlob(null);
       setOriginalUrl(null);
-    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (!isLoading || isRevealing) return;
 
     const interval = setInterval(() => {
       setLoadingStep((prev) => {
@@ -64,7 +106,7 @@ export default function Home(): JSX.Element {
     }, 600);
 
     return () => clearInterval(interval);
-  }, [isLoading]);
+  }, [isLoading, isRevealing]);
 
   // Clean up object URLs to prevent memory leaks
   useEffect(() => {
@@ -72,8 +114,11 @@ export default function Home(): JSX.Element {
       if (resultUrl) {
         URL.revokeObjectURL(resultUrl);
       }
+      if (tempResultUrl) {
+        URL.revokeObjectURL(tempResultUrl);
+      }
     };
-  }, [resultUrl]);
+  }, [resultUrl, tempResultUrl]);
 
   const handleFileSelect = async (file: File): Promise<void> => {
     setSelectedFile(file);
@@ -89,18 +134,29 @@ export default function Home(): JSX.Element {
       URL.revokeObjectURL(resultUrl);
       setResultUrl(null);
     }
+    if (tempResultUrl) {
+      URL.revokeObjectURL(tempResultUrl);
+      setTempResultUrl(null);
+    }
+    setTempResultBlob(null);
+    setIsRevealing(false);
+    setRevealProgress(0);
     setSliderPos(50); // Reset slider
 
     try {
       const blob = await removeBg(file);
-      setResultBlob(blob);
-      setResultUrl(URL.createObjectURL(blob));
+      const objectUrl = URL.createObjectURL(blob);
+      
+      // Stage the result and start the satisfying single-direction wipe reveal
+      setTempResultBlob(blob);
+      setTempResultUrl(objectUrl);
+      setRevealProgress(0);
+      setIsRevealing(true);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to remove background";
       setError(errorMessage);
       setResultBlob(null);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -113,6 +169,13 @@ export default function Home(): JSX.Element {
       URL.revokeObjectURL(resultUrl);
       setResultUrl(null);
     }
+    if (tempResultUrl) {
+      URL.revokeObjectURL(tempResultUrl);
+      setTempResultUrl(null);
+    }
+    setTempResultBlob(null);
+    setIsRevealing(false);
+    setRevealProgress(0);
     setError(null);
     setLoadingStep(0);
   };
@@ -165,20 +228,104 @@ export default function Home(): JSX.Element {
 
         {/* PROCESSING & PREVIEW STATE */}
         {originalUrl && !resultBlob && (
-          <div className="space-y-6 animate-fade-up flex flex-col items-center justify-center min-h-[50vh] w-full relative z-10">
-            <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight">
-              Processing your image...
-            </h2>
+          <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center min-h-[60vh] w-full relative z-10 py-6">
+            
+            {/* Header Text */}
+            <div className="text-center space-y-2 max-w-md">
+              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                {isRevealing ? "Revealing Result..." : "Analyzing Image Subject..."}
+              </h2>
+              <p className="text-slate-400 text-sm">
+                {isRevealing 
+                  ? "Background removed successfully. Applying final mask..." 
+                  : "Detecting borders, details, and separating foreground..."
+                }
+              </p>
+            </div>
 
-            {isLoading && (
-              <div className="flex flex-col items-center justify-center gap-5 w-full max-w-sm">
-                <div className="flex gap-2.5">
-                  <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots" />
-                  <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-1" />
-                  <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-2" />
-                </div>
-                <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 animate-progress-fill" />
+            {/* Premium Scanning Image Display */}
+            <div className="relative rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-950/60 max-w-full max-h-[50vh] p-2 flex items-center justify-center">
+              
+              <div className="relative rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center max-h-[45vh]">
+                
+                {/* 1. Loop Scan Mode (Still Loading from API) */}
+                {!isRevealing ? (
+                  <div className="relative inline-block max-w-full max-h-full">
+                    {/* The Original Image */}
+                    <img
+                      src={originalUrl}
+                      alt="Scanning original"
+                      className="max-h-[40vh] max-w-full object-contain block opacity-95 transition-opacity duration-300 filter brightness-90 contrast-105"
+                    />
+                    
+                    {/* Matrix grid & scanner tint overlay */}
+                    <div className="absolute inset-0 bg-indigo-500/5 mix-blend-overlay pointer-events-none" />
+                    
+                    {/* Glowing Laser Scan Bar */}
+                    <div className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_12px_#6366f1,0_0_24px_#6366f1] animate-laser-scan z-20" />
+                  </div>
+                ) : (
+                  /* 2. Wipe Reveal Mode (API finished, revealing transparent image) */
+                  <div className="relative inline-block max-w-full max-h-full">
+                    
+                    {/* Theme-matching Checkerboard Background (Bottom Layer) */}
+                    <div 
+                      className="absolute inset-0 z-0"
+                      style={{
+                        backgroundColor: '#0F0C1B',
+                        backgroundImage: 'linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E), linear-gradient(45deg, #1C192E 25%, transparent 25%, transparent 75%, #1C192E 75%, #1C192E)',
+                        backgroundSize: '24px 24px',
+                        backgroundPosition: '0 0, 12px 12px'
+                      }}
+                    />
+
+                    {/* Processed BG-Removed Image (Middle Layer - Revealed from top down) */}
+                    {tempResultUrl && (
+                      <img
+                        src={tempResultUrl}
+                        alt="Processed Preview"
+                        className="relative z-10 max-h-[40vh] max-w-full object-contain block select-none pointer-events-none transition-all duration-75"
+                        style={{ clipPath: `inset(0 0 ${100 - revealProgress}% 0)` }}
+                      />
+                    )}
+
+                    {/* Original Image (Top Layer - Clipped from top down, revealing the transparent layer) */}
+                    <div 
+                      className="absolute inset-0 z-20 w-full h-full"
+                      style={{ clipPath: `inset(${revealProgress}% 0 0 0)` }}
+                    >
+                      <img
+                        src={originalUrl}
+                        alt="Original Preview"
+                        className="w-full h-full object-contain block select-none pointer-events-none"
+                      />
+                    </div>
+
+                    {/* Glowing Laser Reveal Bar */}
+                    <div 
+                      className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_15px_#6366f1,0_0_30px_#6366f1] z-30 transition-all duration-75"
+                      style={{ top: `${revealProgress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Text Steps Details */}
+            {!isRevealing && (
+              <div className="flex flex-col items-center justify-center gap-3 w-full max-w-xs">
+                <p className="text-center text-sm font-semibold tracking-wide uppercase text-indigo-400 animate-pulse">
+                  {loadingStep === 0 && "Analyzing Subject Elements..."}
+                  {loadingStep === 1 && "Isolating Edge Boundaries..."}
+                  {loadingStep === 2 && "Executing Neural Network..."}
+                  {loadingStep === 3 && "Upscaling Transparency Mask..."}
+                </p>
+                
+                {/* Minor glowing dot line helper */}
+                <div className="flex gap-2">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full animate-ping" />
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-60" />
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-30" />
                 </div>
               </div>
             )}
