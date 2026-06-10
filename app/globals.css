@@ -14,12 +14,12 @@ html {
 }
 
 body {
-  @apply bg-cream font-body text-gray-900;
+  @apply bg-[#030014] font-body text-slate-200 overflow-x-hidden;
 }
 
 @layer components {
   .btn-coral {
-    @apply bg-gradient-coral px-6 py-3 rounded-full font-medium text-white transition-all duration-300 hover:shadow-soft-lg active:scale-95;
+    @apply bg-indigo-600 px-6 py-3 rounded-full font-medium text-white transition-all duration-300 hover:bg-indigo-700 active:scale-95 shadow-lg shadow-indigo-600/20;
   }
 
   .btn-coral-hover {

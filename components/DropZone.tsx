@@ -83,10 +83,10 @@ export default function DropZone({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={handleClick}
-        className={`relative w-full px-8 py-12 md:py-16 rounded-2xl border-2 border-dashed transition-all duration-200 cursor-pointer ${
+        className={`relative w-full px-8 py-14 md:py-16 rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer backdrop-blur-md ${
           isDragging
-            ? "border-coral-dark bg-orange-50"
-            : "border-gray-300 hover:border-coral-main"
+            ? "border-indigo-400 bg-indigo-950/20"
+            : "border-slate-700/60 bg-[#12101e]/40 hover:border-indigo-500/50 hover:bg-[#12101e]/60"
         } ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
       >
         <input
@@ -99,34 +99,48 @@ export default function DropZone({
         />
 
         {!isLoading ? (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <div className="text-5xl md:text-6xl animate-bob">📸</div>
-            <div>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900">
+          <div className="flex flex-col items-center justify-center gap-5 text-center">
+            {/* SVG Cloud Upload Icon */}
+            <div className="p-4 rounded-2xl bg-indigo-500/5 text-indigo-400 border border-indigo-500/10 shadow-inner group-hover:scale-105 transition-transform duration-300">
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            
+            <div className="space-y-1.5">
+              <h3 className="text-lg md:text-xl font-semibold text-white">
                 Drag and drop your image
               </h3>
-              <p className="text-gray-600 text-sm md:text-base mt-1">
-                or click to browse
+              <p className="text-slate-400 text-sm">
+                or click to browse from device
               </p>
             </div>
-            <p className="text-xs md:text-sm text-gray-500 mt-2">
-              PNG, JPG, GIF up to 10MB
+
+            <button className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-medium text-sm rounded-xl transition-all shadow-md shadow-indigo-600/10 border border-indigo-500/20">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              Upload
+            </button>
+
+            <p className="text-xs text-slate-500 mt-1">
+              Supports PNG, JPG, WEBP (Max 10MB)
             </p>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-8">
-            <div className="w-full max-w-xs space-y-4">
-              <div className="flex gap-2 justify-center">
-                <div className="w-3 h-3 bg-coral-main rounded-full animate-bounce-dots" />
-                <div className="w-3 h-3 bg-coral-main rounded-full animate-bounce-dots-delay-1" />
-                <div className="w-3 h-3 bg-coral-main rounded-full animate-bounce-dots-delay-2" />
+          <div className="flex flex-col items-center justify-center py-6">
+            <div className="w-full max-w-xs space-y-5">
+              <div className="flex gap-2.5 justify-center">
+                <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots" />
+                <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-1" />
+                <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-2" />
               </div>
 
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-coral animate-progress-fill" />
+              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 animate-progress-fill" />
               </div>
 
-              <p className="text-center text-sm font-medium text-gray-700 min-h-6">
+              <p className="text-center text-sm font-medium text-indigo-200 min-h-6">
                 {LOADING_STEPS[Math.min(loadingStep, LOADING_STEPS.length - 1)]}
               </p>
             </div>
