@@ -124,7 +124,7 @@ export default function Home(): JSX.Element {
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none z-0" />
       <div className="absolute top-[30%] right-[10%] w-[30%] h-[30%] rounded-full bg-fuchsia-500/5 blur-[100px] pointer-events-none z-0" />
 
-      <div className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full flex-1 flex flex-col relative z-10 ${originalUrl ? 'justify-center' : ''}`}>
+      <main className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full flex-1 flex flex-col relative z-10 ${originalUrl ? 'justify-center' : ''}`}>
         
         {/* Main Content Redesign */}
         {!originalUrl && (
@@ -341,7 +341,7 @@ export default function Home(): JSX.Element {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

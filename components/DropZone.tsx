@@ -108,10 +108,10 @@ export default function DropZone({
             </div>
             
             <div className="space-y-1.5">
-              <h3 className="text-lg md:text-xl font-semibold text-white">
+              <h2 className="text-lg md:text-xl font-semibold text-white">
                 Drag and drop your image
-              </h3>
-              <p className="text-slate-400 text-sm">
+              </h2>
+              <p className="text-slate-300 text-sm">
                 or click to browse from device
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function DropZone({
               Upload
             </button>
 
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-400 mt-1">
               Supports PNG, JPG, WEBP (Max 10MB)
             </p>
           </div>
