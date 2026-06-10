@@ -20,9 +20,15 @@ export default function BgAnimation({
   const isFinished = resultUrl && !isRevealing;
 
   return (
-    <div className="relative rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-[#0b0914] p-3 flex items-center justify-center max-w-full">
+    <div className={`relative rounded-3xl overflow-hidden border transition-all duration-500 shadow-2xl p-3 flex items-center justify-center max-w-full ${
+      isFinished 
+        ? "bg-white border-slate-200/80 shadow-slate-200/40" 
+        : "bg-[#0b0914] border-slate-800/80"
+    }`}>
       <div 
-        className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center max-h-[45vh] max-w-full"
+        className={`relative rounded-2xl overflow-hidden flex items-center justify-center max-h-[45vh] max-w-full transition-colors duration-500 ${
+          isFinished ? "bg-slate-100" : "bg-slate-950"
+        }`}
         style={isFinished ? {
           backgroundColor: '#ffffff',
           backgroundImage: 'linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0), linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0)',
