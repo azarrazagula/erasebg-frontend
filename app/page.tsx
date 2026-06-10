@@ -181,12 +181,25 @@ export default function Home(): JSX.Element {
     setLoadingStep(0);
   };
 
+  const isFinished = !!resultUrl && !isRevealing;
+
   return (
-    <div className="min-h-screen bg-[#030014] text-slate-100 relative overflow-hidden flex flex-col">
+    <div className={`min-h-screen relative overflow-hidden flex flex-col transition-colors duration-500 ${
+      isFinished ? "bg-[#F8FAFC] text-slate-900" : "bg-[#030014] text-slate-100"
+    }`}>
       {/* Ambient background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none z-0" />
-      <div className="absolute top-[30%] right-[10%] w-[30%] h-[30%] rounded-full bg-fuchsia-500/5 blur-[100px] pointer-events-none z-0" />
+      {!isFinished ? (
+        <>
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none z-0" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none z-0" />
+          <div className="absolute top-[30%] right-[10%] w-[30%] h-[30%] rounded-full bg-fuchsia-500/5 blur-[100px] pointer-events-none z-0" />
+        </>
+      ) : (
+        <>
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none z-0" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-500/5 blur-[100px] pointer-events-none z-0" />
+        </>
+      )}
 
       <main className={`max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full flex-1 flex flex-col relative z-10 ${originalUrl ? 'justify-center' : ''}`}>
         
@@ -233,12 +246,16 @@ export default function Home(): JSX.Element {
             
             {/* Header Text */}
             <div className="text-center space-y-2.5 max-w-md">
-              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+              <h2 className={`text-2xl md:text-3xl font-bold tracking-tight transition-colors duration-500 ${
+                isFinished ? "text-slate-900" : "text-white"
+              }`}>
                 {!tempResultUrl && "Analyzing Image..."}
                 {tempResultUrl && isRevealing && "Revealing Result..."}
                 {resultUrl && !isRevealing && "Background Removed!"}
               </h2>
-              <p className="text-slate-400 text-sm">
+              <p className={`text-sm transition-colors duration-500 ${
+                isFinished ? "text-slate-600" : "text-slate-400"
+              }`}>
                 {!tempResultUrl && "Detecting borders, details, and separating foreground..."}
                 {tempResultUrl && isRevealing && "Applying final transparent mask..."}
                 {resultUrl && !isRevealing && "Your transparent PNG is ready for download."}
