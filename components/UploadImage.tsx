@@ -30,6 +30,21 @@ export default function UploadImage({
 }: UploadImageProps): JSX.Element {
   return (
     <div className="space-y-8 animate-fade-up flex flex-col items-center justify-center min-h-[60vh] w-full relative z-10 py-6">
+      {/* Back Button */}
+      <button
+        onClick={handleReset}
+        className={`self-start md:absolute md:top-6 md:left-0 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold border transition-all duration-300 active:scale-95 z-30 ${
+          isFinished
+            ? "bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700"
+            : "bg-slate-950/40 hover:bg-slate-900/60 border-slate-800/80 text-slate-300 hover:text-white"
+        }`}
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back
+      </button>
+
       {/* Header Text */}
       <div className="text-center space-y-2.5 max-w-md">
         <h2 className={`text-2xl md:text-3xl font-bold tracking-tight transition-colors duration-500 ${
