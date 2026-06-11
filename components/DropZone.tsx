@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useRef } from "react";
+import { LoadingStep } from "@/types";
 
 interface DropZoneProps {
   onFileSelect: (file: File) => void;
   isLoading: boolean;
-  loadingStep: number;
+  loadingStep: LoadingStep;
   disabled: boolean;
 }
 
