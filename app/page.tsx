@@ -70,6 +70,7 @@ export default function Home(): JSX.Element {
             resultBlob={resultBlob}
             handleReset={handleReset}
             isFinished={isFinished}
+            error={error}
           />
         )}
 
