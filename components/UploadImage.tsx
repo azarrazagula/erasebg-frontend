@@ -68,10 +68,10 @@ export default function UploadImage({
               {loadingStep === 2 && "Executing Neural Network..."}
               {loadingStep === 3 && "Upscaling Transparency Mask..."}
             </p>
-            <div className="flex gap-2">
-              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-ping" />
-              <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-60" />
-              <div className="w-2 h-2 bg-indigo-500 rounded-full opacity-30" />
+            <div className="flex gap-2.5 justify-center">
+              <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce-dots" />
+              <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-1" />
+              <div className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce-dots-delay-2" />
             </div>
           </div>
         )}

@@ -70,7 +70,6 @@ erasebg-frontend/
 │   └── globals.css           # Global styles with Tailwind
 ├── components/
 │   ├── DropZone.tsx          # Drag & drop upload with loading
-│   ├── ImagePreview.tsx      # Before/after image viewer
 │   └── DownloadBtn.tsx       # PNG/JPG download buttons
 ├── lib/
 │   └── api.ts                # FastAPI integration
