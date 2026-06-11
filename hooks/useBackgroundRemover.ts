@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { removeBg } from "@/lib/api";
 import { LoadingStep } from "@/types";
 
@@ -13,6 +13,15 @@ export function useBackgroundRemover() {
   const [loadingStep, setLoadingStep] = useState<LoadingStep>(0);
   const [sliderPos, setSliderPos] = useState(50);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Clean up any ongoing request on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   // Transition & Scan Reveal States
   const [isRevealing, setIsRevealing] = useState(false);
@@ -63,8 +72,14 @@ export function useBackgroundRemover() {
     setRevealProgress(0);
     setSliderPos(50);
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: controller.signal });
       if (!response.ok) {
         throw new Error("Failed to fetch example image");
       }
@@ -72,7 +87,7 @@ export function useBackgroundRemover() {
       const file = new File([blob], filename, { type: blob.type || "image/jpeg" });
       setSelectedFile(file);
 
-      const result = await removeBg(file);
+      const result = await removeBg(file, controller.signal);
       const objectUrl = URL.createObjectURL(result);
       
       // Stage the result and start the satisfying single-direction wipe reveal
@@ -81,6 +96,9 @@ export function useBackgroundRemover() {
       setRevealProgress(0);
       setIsRevealing(true);
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
       const errorMessage =
         err instanceof Error ? err.message : "Failed to process example image";
       setError(errorMessage);
@@ -138,8 +156,14 @@ export function useBackgroundRemover() {
     setRevealProgress(0);
     setSliderPos(50); // Reset slider
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      const blob = await removeBg(file);
+      const blob = await removeBg(file, controller.signal);
       const objectUrl = URL.createObjectURL(blob);
       
       // Stage the result and start the satisfying single-direction wipe reveal
@@ -148,6 +172,9 @@ export function useBackgroundRemover() {
       setRevealProgress(0);
       setIsRevealing(true);
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
       const errorMessage =
         err instanceof Error ? err.message : "Failed to remove background";
       setError(errorMessage);
@@ -157,6 +184,11 @@ export function useBackgroundRemover() {
   };
 
   const handleReset = (): void => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
     setSelectedFile(null);
     setOriginalUrl(null);
     setResultBlob(null);

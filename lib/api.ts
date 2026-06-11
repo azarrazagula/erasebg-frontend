@@ -1,6 +1,6 @@
 import { CoreConfig } from "@/cores/Core";
 
-export async function removeBg(file: File): Promise<Blob> {
+export async function removeBg(file: File, signal?: AbortSignal): Promise<Blob> {
   const apiUrl = CoreConfig.api.baseUrl;
 
   if (!apiUrl) {
@@ -16,6 +16,7 @@ export async function removeBg(file: File): Promise<Blob> {
       {
         method: "POST",
         body: formData,
+        signal,
       },
     );
 
