@@ -80,9 +80,16 @@ export default function Footer({ isLightTheme }: FooterProps): JSX.Element {
 
           {/* Column 3: Credits & Copyright */}
           <div className="space-y-1.5 md:text-right text-xs">
-            <p className="font-semibold text-[11px] uppercase tracking-wider text-slate-500">
+            <a
+              href="https://github.com/azarrazagula"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`font-semibold text-[11px] uppercase tracking-wider transition-colors duration-300 block ${
+                isLightTheme ? "text-slate-500 hover:text-indigo-600" : "text-slate-400 hover:text-white"
+              }`}
+            >
               Built with by AzarIbrahim
-            </p>
+            </a>
             <p className="text-[11px] opacity-80">
               &copy; {new Date().getFullYear()} EraseBG. All rights reserved.
             </p>
