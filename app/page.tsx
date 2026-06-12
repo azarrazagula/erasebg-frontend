@@ -8,6 +8,7 @@ import HomeSection from "@/components/HomeSection";
 import UploadImage from "@/components/UploadImage";
 import ExampleCards from "@/components/ExampleCards";
 import ErrorBanner from "@/components/ErrorBanner";
+import Footer from "@/components/Footer";
 
 export default function Home(): JSX.Element {
   // Destructure reactive states and handler events from custom business hook
@@ -93,6 +94,9 @@ export default function Home(): JSX.Element {
           />
         )}
       </main>
+
+      {/* Footer copyright and brand navigation component */}
+      <Footer isLightTheme={!!originalUrl} />
     </div>
   );
 }
