@@ -1,15 +1,23 @@
 /**
- * Core Configuration
- * Handles environment-specific API URLs for development and production
+ * Core Configuration Setup
+ * 
+ * Manages environment-specific API endpoints to route background removal requests
+ * dynamically to localhost during development or remote cloud gateways in production.
  */
 
+/**
+ * Resolves the absolute backend API URL based on environment checks.
+ * Checks for user overrides (NEXT_PUBLIC_API_URL), development flags, or falls back to production endpoints.
+ * 
+ * @returns {string} The active backend API Base URL.
+ */
 const getApiUrl = (): string => {
-  // Check if we have an explicit environment variable
+  // Check if a custom server configuration variable is explicitly set
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // Development environment (localhost)
+  // Detect local development mode or localhost loops
   if (
     process.env.NODE_ENV === "development" ||
     (typeof window !== "undefined" && window.location.hostname === "localhost")
@@ -17,14 +25,15 @@ const getApiUrl = (): string => {
     return "http://localhost:8000";
   }
 
-  // Production environment (Vercel or hosted)
+  // Production fallback API endpoint running on Render cloud environment
   return "https://erasebg-backend.onrender.com";
 };
 
+// Export the resolved API Base URL
 export const API_BASE_URL = getApiUrl();
 
 /**
- * Configuration object for the application
+ * Application config object mappings.
  */
 export const CoreConfig = {
   api: {
